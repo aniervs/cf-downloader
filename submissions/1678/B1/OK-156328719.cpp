@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+#define endl '\n' 
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+using namespace std;
+
+using ll = long long;
+const int maxn = 2e5 + 5;
+
+int dp[maxn][2][2];
+
+void solve(){
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    s = '$' + s;
+
+    for(int i = 0; i <= n; i++)
+        for(int j = 0; j < 2; j++){
+            for(int k = 0; k < 2; k++){
+                dp[i][j][k] = 1e9;
+            }
+        }
+    
+    dp[1][s[1] - '0'][1] = 0;
+    dp[1][!(s[1] - '0')][1] = 1;
+
+    for(int i = 1; i < n; i++){
+        for(int j = 0; j < 2; j++){
+            {
+                // even length, try add a new segment
+                dp[i+1][!j][1] = min(dp[i+1][!j][1], dp[i][j][0] + (int)(j == s[i + 1] - '0'));
+
+                // try to extend
+                dp[i+1][j][1] = min(dp[i+1][j][1], dp[i][j][0] + (int)(j != s[i + 1] - '0'));
+            }
+            {
+                // odd length, extend
+                dp[i+1][j][0] = min(dp[i+1][j][0], dp[i][j][1] + (int)(j != s[i + 1] - '0'));
+            }
+        }
+    }
+    
+    cout << min(dp[n][0][0], dp[n][1][0]) << endl;
+}
+
+int main(){
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    cout.setf(ios::fixed); cout.precision(0); 
+
+    int CASOS;
+    cin >> CASOS;
+    for(int caso = 1; caso <= CASOS; caso++){
+        solve();
+    }
+
+    cerr << endl << "Running time: " << (double)clock()/CLOCKS_PER_SEC << " seconds."<< endl;
+
+    return 0;
+}
